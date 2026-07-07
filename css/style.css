@@ -246,9 +246,9 @@ body {
 	background: url('../images/face.png') center / contain no-repeat;
 	cursor: pointer;
 	/* Compositor-only transition (transform + opacity) — no layout thrash. */
-	transition: transform .3s cubic-bezier(.55, .06, .9, .3), opacity .28s ease-in;
+	transition: transform .42s cubic-bezier(.6, .04, .98, .34), opacity .42s ease-in;
 }
-.board__row:not(.board__row--dim) .bird:hover {
+.board__row:not(.board__row--dim) .bird:not(.bird--gone):hover {
 	transform: translateY(-6px) scale(1.08);
 	filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .3));
 }

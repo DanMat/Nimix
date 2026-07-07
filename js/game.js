@@ -87,6 +87,15 @@
 		removeBird(birdEl);
 		lockOtherRows(row);
 		els.endTurn.disabled = false;
+
+		// Clearing the whole row is a complete move — nothing more can be done
+		// this turn, so end it automatically once the last poof has played.
+		if (state.heaps[row] === 0) {
+			els.endTurn.disabled = true;
+			setStatus('Row ' + (row + 1) + ' cleared — ending your turn.');
+			setTimeout(endTurn, 480);
+			return;
+		}
 		setStatus('Removed ' + state.removedThisTurn + ' from row ' + (row + 1) + '. Take more, or end your turn.');
 	}
 
@@ -212,7 +221,7 @@
 		birdEl.style.setProperty('--spin', (Math.random() < 0.5 ? -1 : 1) * (300 + Math.random() * 180) + 'deg');
 		birdEl.classList.add('bird--gone');
 		// Once it has imploded, drop it out of layout in one step (no width animation).
-		setTimeout(function () { birdEl.style.display = 'none'; }, 300);
+		setTimeout(function () { birdEl.style.display = 'none'; }, 430);
 	}
 
 	function highlightRow(row) {
