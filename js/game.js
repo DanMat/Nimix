@@ -135,10 +135,10 @@
 		state.heaps[move.row] -= move.count;
 
 		toRemove.forEach(function (b, i) {
-			setTimeout(function () { removeBird(b); }, i * 160);
+			setTimeout(function () { removeBird(b); }, i * 130);
 		});
 
-		var settle = toRemove.length * 160 + 550;
+		var settle = toRemove.length * 130 + 360;
 		setTimeout(function () {
 			els.mascot.classList.remove('mascot--thinking');
 			state.busy = false;
@@ -207,11 +207,12 @@
 	}
 
 	function removeBird(birdEl) {
-		birdEl.classList.add('bird--gone');
 		birdEl.disabled = true;
-		// Randomise the fly-off angle a touch for character.
-		birdEl.style.setProperty('--fly-x', (Math.random() * 120 - 60) + 'px');
-		birdEl.style.setProperty('--fly-r', (Math.random() * 60 - 30) + 'deg');
+		// Randomise the spin direction so each poof feels a little different.
+		birdEl.style.setProperty('--spin', (Math.random() < 0.5 ? -1 : 1) * (300 + Math.random() * 180) + 'deg');
+		birdEl.classList.add('bird--gone');
+		// Once it has imploded, drop it out of layout in one step (no width animation).
+		setTimeout(function () { birdEl.style.display = 'none'; }, 300);
 	}
 
 	function highlightRow(row) {
