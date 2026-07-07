@@ -9,8 +9,8 @@
 :root {
 	--bird: 64px;
 	--ink: #0b3a4a;
-	--panel: rgba(255, 255, 255, .32);
-	--panel-2: rgba(255, 255, 255, .55);
+	--panel: rgba(255, 255, 255, .52);
+	--panel-2: rgba(255, 255, 255, .68);
 	--accent: #ff8a3d;
 	--accent-ink: #fff;
 	--scene-filter: none;
@@ -22,8 +22,8 @@
 
 [data-theme='dusk'] {
 	--ink: #5a2412;
-	--panel: rgba(255, 250, 245, .34);
-	--panel-2: rgba(255, 248, 240, .58);
+	--panel: rgba(255, 250, 245, .54);
+	--panel-2: rgba(255, 248, 240, .68);
 	--accent: #e8532f;
 	--scene-filter: sepia(.35) saturate(1.25) hue-rotate(-12deg) brightness(1.02);
 	--sky-top: #ff9a5a;
@@ -34,8 +34,8 @@
 
 [data-theme='night'] {
 	--ink: #eaf4ff;
-	--panel: rgba(12, 24, 46, .42);
-	--panel-2: rgba(18, 34, 62, .62);
+	--panel: rgba(12, 24, 46, .58);
+	--panel-2: rgba(18, 34, 62, .72);
 	--accent: #ffb057;
 	--scene-filter: brightness(.62) saturate(.85) hue-rotate(200deg);
 	--sky-top: #0a1c37;
@@ -73,10 +73,9 @@ body {
 	will-change: transform;
 }
 
-.cloud--1 { top: 8%;  width: 120px; height: 91px; background-image: url('../images/cloud.gif');  animation: drift 46s linear infinite; }
-.cloud--2 { top: 34%; width: 101px; height: 66px; background-image: url('../images/cloud2.gif'); animation: drift 33s linear infinite; animation-delay: -12s; }
-.cloud--3 { top: 4%;  width: 300px; height: 110px; background-image: url('../images/cloud3.gif'); background-size: 100% auto; animation: drift 70s linear infinite; animation-delay: -30s; opacity: .9; }
-.flybird  { top: 22%; width: 64px;  height: 64px; background-image: url('../images/bird.png'); animation: drift 26s linear infinite; animation-delay: -6s; }
+.cloud--1 { top: 8%;  width: 120px; height: 91px; background-image: url('../images/cloud.gif');  animation: drift 54s linear infinite; }
+.cloud--3 { top: 4%;  width: 300px; height: 110px; background-image: url('../images/cloud3.gif'); background-size: 100% auto; animation: drift 80s linear infinite; animation-delay: -30s; opacity: .9; }
+.flybird  { top: 22%; width: 64px;  height: 64px; background-image: url('../images/bird.png'); animation: drift 30s linear infinite; animation-delay: -6s; }
 
 @keyframes drift {
 	from { transform: translateX(-32vw); }
@@ -125,7 +124,6 @@ body {
 .panel {
 	width: min(760px, 100%);
 	background: var(--panel);
-	backdrop-filter: blur(3px);
 	border: 1px solid rgba(255, 255, 255, .35);
 	border-radius: 28px;
 	padding: 22px clamp(16px, 4vw, 30px) 24px;
@@ -247,11 +245,8 @@ body {
 	border: none;
 	background: url('../images/face.png') center / contain no-repeat;
 	cursor: pointer;
-	transition:
-		transform .55s cubic-bezier(.5, -0.4, .7, .2),
-		opacity .55s ease,
-		width .4s ease .3s,
-		margin .4s ease .3s;
+	/* Compositor-only transition (transform + opacity) — no layout thrash. */
+	transition: transform .3s cubic-bezier(.55, .06, .9, .3), opacity .28s ease-in;
 }
 .board__row:not(.board__row--dim) .bird:hover {
 	transform: translateY(-6px) scale(1.08);
@@ -259,12 +254,11 @@ body {
 }
 .bird:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
 
+/* "Black hole" poof: implode to a point with a spin. The element is pulled
+   out of layout by JS once the animation ends, so nothing animates width. */
 .bird--gone {
-	transform: translate(var(--fly-x, 0), -640px) rotate(var(--fly-r, 0)) scale(.5);
+	transform: scale(0) rotate(var(--spin, 360deg));
 	opacity: 0;
-	width: 0;
-	margin-left: 0;
-	margin-right: 0;
 	pointer-events: none;
 }
 
