@@ -10,6 +10,7 @@
 (function () {
 	'use strict';
 
+	var sfx = Retroix.audio();   // 8-bit sound (auto-unlocks on first click)
 	var START = [1, 3, 5, 7];
 
 	var els = {
@@ -78,6 +79,7 @@
 		if (state.activeRow !== null && state.activeRow !== row) {
 			flashStatus('One row per turn — finish this row first!');
 			highlightRow(state.activeRow);
+			sfx.tone({ wave: 'square', freq: 160, dur: 0.12, vol: 0.5 });   // error blip
 			return;
 		}
 
@@ -85,6 +87,7 @@
 		state.removedThisTurn++;
 		state.heaps[row]--;
 		removeBird(birdEl);
+		sfx.blip();
 		lockOtherRows(row);
 		els.endTurn.disabled = false;
 
@@ -144,7 +147,7 @@
 		state.heaps[move.row] -= move.count;
 
 		toRemove.forEach(function (b, i) {
-			setTimeout(function () { removeBird(b); }, i * 130);
+			setTimeout(function () { removeBird(b); sfx.blip(); }, i * 130);
 		});
 
 		var settle = toRemove.length * 130 + 360;
@@ -261,6 +264,7 @@
 			: 'You were forced to take the last bird. Try again?';
 		setBadge(playerWon ? 'player' : 'computer');
 		setStatus(playerWon ? 'You win! 🏆' : 'You lose — the last bird was yours. 🌊');
+		sfx.jingle(playerWon ? 'win' : 'lose');
 		showOverlay(els.overlay);
 	}
 
@@ -318,6 +322,7 @@
 	document.addEventListener('keydown', function (e) {
 		if (e.key === 'Enter' && !els.endTurn.disabled) { endTurn(); }
 		else if (e.key.toLowerCase() === 'n') { newGame(); }
+		else if (e.key.toLowerCase() === 'm') { sfx.toggle(); }
 	});
 
 	newGame();
