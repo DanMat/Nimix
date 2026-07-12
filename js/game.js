@@ -326,4 +326,23 @@
 	});
 
 	newGame();
+
+	// Dev mode: Konami code -> a bot plays full games of Nim (clicks birds, ends
+	// turns) to check a game always reaches an end without soft-locking.
+	Retroix.autopilot({
+		start: function () { if (state.turn === 'over') { newGame(); } },
+		bot: function (a) {
+			if (a.frame % 8 !== 0) { return; }                       // human-paced clicks
+			if (state.turn !== 'player' || state.busy) { return; }
+			var birds = els.board.querySelectorAll('.bird:not(.bird--gone)');
+			if (!birds.length) { return; }
+			if (state.removedThisTurn > 0 && Math.random() < 0.4) { endTurn(); return; }
+			var row = state.activeRow, target = null;
+			for (var i = 0; i < birds.length; i++) { if (row === null || parseInt(birds[i].dataset.row, 10) === row) { target = birds[i]; break; } }
+			if (target) { target.click(); } else if (state.removedThisTurn > 0) { endTurn(); }
+		},
+		progress: function () { return 16 - totalBirds(); },     // birds removed climbs each turn
+		isWin: function () { return state.turn === 'over'; },    // a game reached its end
+		stuck: 15
+	});
 })();
